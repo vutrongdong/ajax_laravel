@@ -9,12 +9,18 @@ use Illuminate\Support\Facades\Validator;
 class AjaxController extends Controller
 {
 	public function index(){
-		$data['students'] = tbl_students::all();
-		return view('ajax.index',$data); 
+		$students = tbl_students::orderBy('id','desc')->paginate(4);
+		return view('ajax.index',compact('students')); 
 	}
+	//load trang
 	public function read_data(){
-		$students = tbl_students::orderBy('id','desc')->get();
+		$students = tbl_students::orderBy('id','desc')->paginate(4);
 		return view('ajax.student_list',compact('students'));
+	}
+	//phân trang 
+	public function studentPage(){
+		$students = tbl_students::orderBy('id','desc')->paginate(4);
+		return view('ajax.student_page',compact('students'));
 	}
 	public function store(Request $request){
 		$validator =Validator::make($request->all(),

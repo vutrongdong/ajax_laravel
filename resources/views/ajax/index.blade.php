@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 @include('ajax.add_student')
 @include('ajax.update_students')
@@ -13,20 +12,8 @@
                     <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal"> Add Students</button>
                     <button id="read_data" style="float: right;" type="submit" class="btn btn-info pull-right">Load data by ajax</button>
                 </div>
-                <div class="card-body">
-                    <table class="table table-hover table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Slug</th>
-                                <th>Gender</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="student_info">
-                        </tbody>
-                    </table>
+                <div id="body" class="card-body">
+                    @include('ajax.student_page')
                 </div>
             </div>
         </div>
@@ -34,6 +21,23 @@
 </div>
 @section('script')
 <script>
+    $(document).ready(function() {
+        // $('.pagination a').on('click',function(e))
+        $(document).on('click','.pagination a',function(e){
+            e.preventDefault();
+            var page = $(this).attr('href').split('?')[1];
+            readPage(page);
+        })
+
+        function readPage(page){
+            $.ajax({
+                url: '/students/page/ajax?'+ page,
+            }).done(function(data){
+                $('#body').html(data);
+                location.hash = page;
+            });
+        }
+    });
      //-----------add student-------------------
      $(document).ready(function() {
 
@@ -56,7 +60,7 @@
         success:function(data){
             console.log(data);
             if($.isEmptyObject(data.error_name||data.error_gender)){
-                $.get('students/read_data',function(data){
+                $.get('read_data',function(data){
                     $('#student_info').html(data);
                     $('#msg').show();
                     $('#msg').fadeOut(2000);
@@ -125,7 +129,7 @@
                     $('#msg').show();
                     $('#msg').fadeOut(2000);
                     $("#msg").html('<p id="msg" class="alert alert-success">cập nhật thành công</p>');
-                    $.get('students/read_data',function(data){
+                    $.get('read_data',function(data){
                         $('#student_info').html(data);
                     })
 

@@ -20,12 +20,17 @@ Auth::routes();
 Route::group(['middleware'=>'auth'],function(){
 	Route::get('/home', 'HomeController@index')->name('home');
 	Route::get('profile/{id}/{slug}','ProfileController@index');
-	Route::get('students','AjaxController@index');
-	Route::get('students/read_data','AjaxController@read_data');
-	Route::post('students/store','AjaxController@store');
-	Route::get('students/destroy','AjaxController@destroy');
-	Route::get('students/edit','AjaxController@edit');
-	Route::post('students/update','AjaxController@update');
+	Route::group(['prefix'=>'students'],function(){
+		Route::get('/','AjaxController@index');
+		//load trang
+		Route::get('read_data','AjaxController@read_data');
+		//phân trang
+		Route::get('page/ajax','AjaxController@studentPage');
+		Route::post('store','AjaxController@store');
+		Route::get('destroy','AjaxController@destroy');
+		Route::get('edit','AjaxController@edit');
+		Route::post('update','AjaxController@update');
+	});
 });
 Route::get('/logout', 'Auth\LoginController@logout');
 
